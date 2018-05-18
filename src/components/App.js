@@ -6,6 +6,7 @@ import FruitBasket from './FruitBasket';
 class App extends React.Component {
   constructor(){
     super();
+
     this.state = {
       filters: [],
       currentFilter: null,
@@ -13,44 +14,37 @@ class App extends React.Component {
     }
   }
 
-  //FETCHES ALL THE FILTERS ONCE AFTER MOUNTING
-    componentWillMount() {
-      this.fetchFilters();
-      this.fetchFruits();
-    }
 
-    fetchFilters = () => {
-      fetch('/api/fruit_types')
-        .then(response => response.json())
-        .then(filters => this.setState({ filters }));
-    }
+  componentWillMount() {
+    this.fetchFilters();
+    this.fetchFruits();
+  }
 
-
-
-    fetchFruits = () => {
-      // SHOULD WE PASS IN THIS.STATE.currentFilter?????
-      let currentFilter = this.state.currentFilter
-      fetch('/api/fruit')
+  fetchFilters = () => {
+    fetch('/api/fruit_types')
       .then(response => response.json())
-      .then(items => {
-        this.setState({ fruit: items })
-      });
-    }
+      .then(filters => this.setState({ filters }));
+  }
 
-    //HANDLE CHANGE IN FILTER SELECTION
-    handleFilterChange = event => {
-      console.log('new filter: ', event.target.value);
-      this.setState({ currentFilter: event.target.value });
+  fetchFruits = () => {
+    fetch('/api/fruit')
+    .then(response => response.json())
+    .then(fruit => this.setState({ fruit }));
+  }
 
-
-    } //pass down to fruitBasket which then passes it down to filter
+  updateFilter = event => {
+    console.log('new filter: ', event.target.value);
+    this.setState({ currentFilter: event.target.value });
+  }
 
   render(){
-    return(
-      <div className="main">
-        <FruitBasket updateFilterCallback={this.handleFilterChange} filters={this.state.filters} fruit={this.state.fruit} currentFilter={this.state.currentFilter} />
-      </div>
-    )
+    return (
+      <FruitBasket
+        updateFilterCallback={this.updateFilter}
+        filters={this.state.filters} fruit={this.state.fruit}
+        currentFilter={this.state.currentFilter}
+      />
+    );
   }
 }
 
